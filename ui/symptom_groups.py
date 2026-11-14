@@ -85,7 +85,6 @@ CHRONIC_CONDITIONS: list[tuple[str, str]] = [
     ("diabetes",       "Сахарный диабет"),
     ("hypertension",   "Артериальная гипертензия"),
     ("asthma",         "Бронхиальная астма"),
-    ("copd",           "ХОБЛ"),
     ("smoker",         "Курильщик (стаж ≥ 5 лет)"),
     ("anticoagulants", "Принимает антикоагулянты"),
 ]

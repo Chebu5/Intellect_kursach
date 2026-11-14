@@ -2,6 +2,7 @@
 ;; МЕДИЦИНСКАЯ ЭКСПЕРТНАЯ СИСТЕМА — МНОГОУРОВНЕВЫЙ ВЫВОД
 ;; Уровни: симптомы -> синдромы -> рекомендации -> отчёт
 ;; Коэффициенты уверенности (MYCIN-подобная алгебра)
+;; Учитывается только наличие симптома (без выраженности)
 ;; ==========================================================
 
 ;; ---------- ШАБЛОНЫ ----------
@@ -15,7 +16,6 @@
 
 (deftemplate symptom
    (slot name (type SYMBOL))
-   (slot severity (type INTEGER) (default 5))
    (slot duration (type SYMBOL) (default unknown)))
 
 (deftemplate syndrome
@@ -98,7 +98,7 @@
 
 (defrule rf-chest-cardiac
    (declare (salience 100))
-   (symptom (name chest-pain) (severity ?s&:(>= ?s 7)))
+   (symptom (name chest-pain))
    (symptom (name dyspnea))
    (not (red-flag (name possible-mi)))
    =>
@@ -107,7 +107,7 @@
 
 (defrule rf-thunderclap
    (declare (salience 100))
-   (symptom (name headache) (severity ?s&:(>= ?s 9)))
+   (symptom (name headache))
    (symptom (name sudden-onset))
    (not (red-flag (name possible-sah)))
    =>
@@ -116,7 +116,7 @@
 
 (defrule rf-abdomen-rigid
    (declare (salience 100))
-   (symptom (name abdomen-pain) (severity ?s&:(>= ?s 7)))
+   (symptom (name abdomen-pain))
    (symptom (name abdomen-rigid))
    (not (red-flag (name acute-abdomen)))
    =>
@@ -162,7 +162,7 @@
 
 (defrule rf-hyperglycemia
    (declare (salience 100))
-   (symptom (name polyuria) (severity ?s&:(>= ?s 8)))
+   (symptom (name polyuria))
    (symptom (name polydipsia))
    (symptom (name confusion))
    (not (red-flag (name hhs-dka)))
@@ -234,6 +234,20 @@
    (symptom (name wheezing))
    =>
    (bump-syndrome pulmonary 0.7))
+
+(defrule syn-pulmo-cough-dyspnea
+   (declare (salience 50))
+   (symptom (name cough))
+   (symptom (name dyspnea))
+   =>
+   (bump-syndrome pulmonary 0.45))
+
+(defrule syn-pulmo-dyspnea-inspiration
+   (declare (salience 50))
+   (symptom (name dyspnea))
+   (symptom (name worse-on-inspiration))
+   =>
+   (bump-syndrome pulmonary 0.45))
 
 ;; --- ГЭРБ ---
 (defrule syn-gerd-classic
@@ -381,7 +395,7 @@
 
 (defrule syn-renal-colic
    (declare (salience 50))
-   (symptom (name flank-pain) (severity ?s&:(>= ?s 7)))
+   (symptom (name flank-pain))
    (symptom (name hematuria))
    =>
    (bump-syndrome renal-colic 0.75))
@@ -468,6 +482,8 @@
 
 ;; ==========================================================
 ;; УРОВЕНЬ 5. ДИФФЕРЕНЦИАЛЬНАЯ ДИАГНОСТИКА (salience 15)
+;; Терапевт добавляется как «страховка» при неоднозначности,
+;; но с уверенностью ниже, чем у профильных специалистов.
 ;; ==========================================================
 
 (defrule competing-syndromes

@@ -28,19 +28,13 @@ with st.sidebar:
     )
 
 # ---------- СИМПТОМЫ ----------
-# Без st.form: тогда слайдер выраженности появляется сразу после установки галочки.
 selected = []
-st.subheader("Отметьте симптомы и укажите выраженность (0–10)")
+st.subheader("Отметьте симптомы")
 for group, items in SYMPTOM_GROUPS.items():
     with st.expander(group, expanded=False):
         for sid, label in items:
-            c1, c2 = st.columns([3, 1])
-            with c1:
-                checked = st.checkbox(label, key=f"chk_{sid}")
-            if checked:
-                with c2:
-                    sev = st.slider("Выраженность", 0, 10, 5, key=f"sev_{sid}")
-                selected.append({"name": sid, "severity": sev})
+            if st.checkbox(label, key=f"chk_{sid}"):
+                selected.append(sid)
 
 # ---------- ЗАПУСК ДИАГНОСТИКИ ----------
 if st.button("🔍 Диагностировать", type="primary"):
@@ -50,8 +44,8 @@ if st.button("🔍 Диагностировать", type="primary"):
     for c in chronic:
         es.assert_chronic(c)
     for s in selected:
-        es.assert_symptom(s["name"], severity=s["severity"])
-    # Результат хранится в session_state, чтобы не пропадал при движении слайдеров
+        es.assert_symptom(s)
+    # Результат хранится в session_state, чтобы не пропадал при перерисовке
     st.session_state["result"] = es.run()
 
 # ---------- ВЫВОД ----------

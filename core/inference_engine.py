@@ -3,7 +3,6 @@ from collections import Counter
 from typing import Dict, Any
 import clips
 
-
 class CaptureRouter(clips.Router):
     """
     Роутер, перехватывающий вывод CLIPS в буфер.
@@ -28,7 +27,6 @@ class CaptureRouter(clips.Router):
 
     def clear(self):
         self.buffer = io.StringIO()
-
 
 class MedicalExpertSystem:
     """Обёртка над CLIPS с многоуровневым выводом и сбором объяснений."""
@@ -57,10 +55,9 @@ class MedicalExpertSystem:
     def assert_chronic(self, name: str):
         self.env.find_template("chronic-condition").assert_fact(name=clips.Symbol(name))
 
-    def assert_symptom(self, name: str, severity: int = 5, duration: str = "unknown"):
+    def assert_symptom(self, name: str, duration: str = "unknown"):
         self.env.find_template("symptom").assert_fact(
             name=clips.Symbol(name),
-            severity=severity,
             duration=clips.Symbol(duration),
         )
 
