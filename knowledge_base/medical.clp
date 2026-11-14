@@ -478,8 +478,7 @@
    (test (< (abs (- ?cf1 ?cf2)) 0.2))
    (not (recommendation (specialist "ТЕРАПЕВТ")))
    =>
-   (bind ?maxcf (max ?cf1 ?cf2))
-   (bind ?newcf (min 0.99 (+ ?maxcf 0.1)))
+   (bind ?newcf (* 0.5 (min ?cf1 ?cf2)))
    (assert (recommendation (specialist "ТЕРАПЕВТ") (cf ?newcf) (urgency routine))))
 
 ;; ==========================================================
