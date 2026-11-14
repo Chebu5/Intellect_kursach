@@ -1,3 +1,7 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent.resolve()))
+
 import streamlit as st
 from core.inference_engine import MedicalExpertSystem
 from core.explanation import group_explanation
