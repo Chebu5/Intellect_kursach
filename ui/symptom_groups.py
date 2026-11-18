@@ -33,9 +33,7 @@ SYMPTOM_GROUPS: dict[str, list[tuple[str, str]]] = {
         ("abdomen-pain",        "Боль в животе"),
         ("abdomen-rigid",       "Живот твёрдый / напряжённый"),
         ("nausea",              "Тошнота"),
-        ("lower-abdomen-pain",  "Боль внизу живота"),
-        ("vaginal-discharge",   "Выделения из влагалища"),
-        ("vaginal-bleeding",    "Кровянистые выделения из влагалища"),
+        ("lower-abdomen-pain",  "Боль внизу живота")
     ],
     "Спина / неврология": [
         ("back-pain",           "Боль в спине"),
@@ -85,6 +83,6 @@ CHRONIC_CONDITIONS: list[tuple[str, str]] = [
     ("diabetes",       "Сахарный диабет"),
     ("hypertension",   "Артериальная гипертензия"),
     ("asthma",         "Бронхиальная астма"),
-    ("smoker",         "Курильщик (стаж ≥ 5 лет)"),
+    ("smoker",         "Курильщик"),
     ("anticoagulants", "Принимает антикоагулянты"),
 ]
