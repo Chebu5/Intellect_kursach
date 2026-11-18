@@ -18,7 +18,7 @@ SYMPTOM_GROUPS: dict[str, list[tuple[str, str]]] = {
         ("chest-pain",           "Боль или дискомфорт в груди"),
         ("chest-radiation",      "Боль отдаёт в руку, шею или челюсть"),
         ("dyspnea",              "Одышка"),
-        ("palpitations",         "Сердцебиение / перебои"),
+        ("palpitations",         "Проблемы с сердцебиением"),
         ("cough",                "Кашель"),
         ("fever",                "Повышенная температура"),
         ("wheezing",             "Свистящее дыхание"),

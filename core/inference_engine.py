@@ -1,14 +1,13 @@
 import io
+import pathlib
 from collections import Counter
 from typing import Dict, Any
 import clips
 
+
 class CaptureRouter(clips.Router):
     """
     Роутер, перехватывающий вывод CLIPS в буфер.
-
-    Наследуется от clips.Router (абстрактный класс), поэтому обязан
-    передать в super().__init__ имя и приоритет.
     """
 
     def __init__(self, name: str = "capture-router", priority: int = 10):
@@ -28,12 +27,25 @@ class CaptureRouter(clips.Router):
     def clear(self):
         self.buffer = io.StringIO()
 
+
 class MedicalExpertSystem:
     """Обёртка над CLIPS с многоуровневым выводом и сбором объяснений."""
 
-    def __init__(self, kb_path: str = "knowledge_base/medical.clp"):
+    def __init__(self, kb_dir: str = None):
+        # Если путь не передан, ищем папку knowledge_base в корне проекта
+        if kb_dir is None:
+            base_dir = pathlib.Path(__file__).parent.parent
+            kb_dir = base_dir / "knowledge_base"
+        else:
+            kb_dir = pathlib.Path(kb_dir)
+
         self.env = clips.Environment()
-        self.env.load(kb_path)
+        
+        # Загружаем все .clp файлы в алфавитном порядке.
+        # Это гарантирует, что 00_base.clp (с шаблонами и функциями) 
+        # загрузится самым первым, а остальные файлы смогут его использовать.
+        for clp_file in sorted(kb_dir.glob("*.clp")):
+            self.env.load(str(clp_file))
 
         # Подключаем собственный роутер
         self.router = CaptureRouter()
@@ -56,6 +68,11 @@ class MedicalExpertSystem:
         self.env.find_template("chronic-condition").assert_fact(name=clips.Symbol(name))
 
     def assert_symptom(self, name: str, duration: str = "unknown"):
+        """
+        Добавляет факт симптома. 
+        Параметр severity удален, так как в UI нет ползунков, 
+        а в шаблоне CLIPS нет этого слота.
+        """
         self.env.find_template("symptom").assert_fact(
             name=clips.Symbol(name),
             duration=clips.Symbol(duration),

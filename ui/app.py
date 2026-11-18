@@ -37,7 +37,7 @@ for group, items in SYMPTOM_GROUPS.items():
                 selected.append(sid)
 
 # ---------- ЗАПУСК ДИАГНОСТИКИ ----------
-if st.button("🔍 Диагностировать", type="primary"):
+if st.button("🔍 Проверить", type="primary"):
     es = MedicalExpertSystem()
     es.reset()
     es.assert_patient(age=age, sex=sex, pregnant=pregnant)
@@ -45,7 +45,6 @@ if st.button("🔍 Диагностировать", type="primary"):
         es.assert_chronic(c)
     for s in selected:
         es.assert_symptom(s)
-    # Результат хранится в session_state, чтобы не пропадал при перерисовке
     st.session_state["result"] = es.run()
 
 # ---------- ВЫВОД ----------
@@ -61,17 +60,15 @@ if result:
         top = distribution[0]
         st.success(
             f"Наиболее подходящий специалист: "
-            f"{top['specialist'].capitalize()} ({top['percent']:.0f}%)"
+            f"{top['specialist'].capitalize()}"
         )
         st.metric("Срочность", URGENCY_MAP.get(top["urgency"], top["urgency"]))
 
         st.markdown("#### К какому специалисту обратиться")
         for d in distribution:
-            st.progress(
-                min(int(d["percent"]), 100),
-                text=(f"{d['specialist'].capitalize()} — {d['percent']:.1f}% "
-                      f"(уверенность {round(d['cf'] * 100)}%, "
-                      f"{URGENCY_MAP.get(d['urgency'], d['urgency'])})"),
+            st.write(
+                f"**{d['specialist'].capitalize()}** — уверенность {round(d['cf'] * 100)}%, "
+                f"{URGENCY_MAP.get(d['urgency'], d['urgency'])}"
             )
     elif not result["red_flags"]:
         st.info("Недостаточно данных для гипотезы. Рекомендован терапевт.")
